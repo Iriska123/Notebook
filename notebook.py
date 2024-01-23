@@ -2,9 +2,7 @@ from datetime import datetime
 import json
 
 
-
-notes = []
-
+notes = {}
 
 
 def input_data():
@@ -19,18 +17,41 @@ def input_data():
     return note
     
 
+def file_append(data):
+    data = json.dumps(data)
+    data = json.loads(str(data))
+    with open("notebook.json", "a+", encoding="UTF-8") as file:
+        # for note in notes:
+            json.dump(data, file,indent=4)
+
 def add_note():
-    new_note = input_data()
-    max_id = max(note['id'] for note in notes) if notes else 0
-    new_note['id']= max_id + 1
-    notes.append(new_note)
+    temp_note = {}
+    temp_data = input_data()
+    if not notes:
+        id = 0
+        notes[id] = temp_data
+        temp_note[id] = temp_data
+        file_append(temp_note)
+
+    else:
+        max_id = max(notes.keys())
+        max_id += 1
+        notes[max_id] = temp_data
+        temp_note[max_id] = temp_data
+        file_append(temp_note)
+ 
+    
+    # file_append(notes)
+ 
 
     
 def print_notebook():
     print(notes)
 
 add_note()
+print_notebook()
 add_note()
+# add_note()
 print_notebook()
 
 

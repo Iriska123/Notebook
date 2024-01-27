@@ -1,58 +1,75 @@
 from datetime import datetime
 import json
+import uuid
 
 
-notes = {}
+def create_json():
+    json_data = [{
+        'id': str(uuid.uuid4()),
+        'title': input("Введите название заметки: "),
+        'text': input("Введите текст заметки: "),
+        'date': str(datetime.now().strftime("%d-%m-%Y")),
+        }
+    ]
+    with open('notes.json', 'w', encoding="UTF-8") as file:
+        file.write(json.dumps(json_data, indent=2, ensure_ascii=False))
 
 
-def input_data():
-    note = {}
-    user_title = input("Введите название заметки: ")
-    user_text = input("Введите текст заметки: ")
-    current_datetime = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
-    note['id'] = 0
-    note['title'] = user_title
-    note['text']= user_text
-    note['date'] = current_datetime
-    return note
-    
+def add_to_json():
+    json_data = {
+        'id': str(uuid.uuid4()),
+        'title': input("Введите название заметки: "),
+        'text': input("Введите текст заметки: "),
+        'date': str(datetime.now().strftime("%d-%m-%Y")), 
+    }
+    data = json.load(open("notes.json"))
+    data.append(json_data)
+    with open("notes.json", "w", encoding="UTF-8") as file:
+        json.dump(data, file, indent=2, ensure_ascii=False)
 
-def file_append(data):
-    data = json.dumps(data)
-    data = json.loads(str(data))
-    with open("notebook.json", "a+", encoding="UTF-8") as file:
-        # for note in notes:
-            json.dump(data, file,indent=4)
 
-def add_note():
-    temp_note = {}
-    temp_data = input_data()
-    if not notes:
-        id = 0
-        notes[id] = temp_data
-        temp_note[id] = temp_data
-        file_append(temp_note)
+def update_json():
+    search = input("Изменение заметки. Введите название заметки для поиска: ")
 
-    else:
-        max_id = max(notes.keys())
-        max_id += 1
-        notes[max_id] = temp_data
-        temp_note[max_id] = temp_data
-        file_append(temp_note)
+    data = json.load(open("notes.json"))
+    for el in data:
+        if el['title'] == search:
+            new_title = input("Изменение заметки. Введите новое название заметки: ")
+            new_text = input("Изменение заметки. Введите новый текст заметки: ")
+            el['title'] = new_title
+            el['text'] = new_text
+
+    with open("notes.json", "w", encoding="UTF-8") as file:
+        json.dump(data, file, indent=2, ensure_ascii=False)
  
-    
-    # file_append(notes)
- 
 
-    
+def search_in_json():
+    new_text = input("Поиск заметки. Введите дату для поиска: ")
+    data = json.load(open("notes.json"))
+    for el in data:
+        if el['date'] == new_text:
+            print(el)
+
+
+def delete_from_json():
+    new_text = input("Удаление заметки. Введите название заметки для удаления: ")
+    data = json.load(open("notes.json"))
+    # print(type(data))
+    for el in data:
+            # print(el)
+        if el['title'] == new_text:
+            data.remove(el) 
+    with open("notes.json", "w", encoding="UTF-8") as file:
+        json.dump(data, file, indent=2, ensure_ascii=False)
+
 def print_notebook():
-    print(notes)
+    data = json.load(open("notes.json"))
+    print(data)
 
-add_note()
+
+create_json()
+add_to_json()
+update_json()
+search_in_json()
+delete_from_json()
 print_notebook()
-add_note()
-# add_note()
-print_notebook()
-
-
-
